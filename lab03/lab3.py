@@ -69,17 +69,32 @@ def draw_egg_dots():
 
     glEnd()
 
+def draw_egg_lines():
+    glBegin(GL_LINES)
+    
+
+    for i in range(N-1):
+        for j in range(N-1):
+            glColor3f(1.0, 0.0, 1.0) #pink
+            glVertex(tab[i][j])
+            glVertex(tab[i+1][j])
+
+            glColor3f(1.0, 1.0, 0.0) #yellow
+            glVertex(tab[i][j])
+            glVertex(tab[i][j+1])
+
+    glEnd()
 
 def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    axes()
-    spin(time * 180.0/pi)
-    #rysowanie obiektu
-
-    draw_egg_dots()
     
+    spin(time * 180.0/pi)
+    axes()
+    #rysowanie obiektu
+    #draw_egg_dots()
+    draw_egg_lines()
 
     glFlush()
 
