@@ -6,6 +6,24 @@ from glfw.GLFW import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+from math import sin, cos, pi
+
+N = 50
+
+def x(u,v):
+    return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * cos(pi * v)
+
+def y(u,v):
+    return ((160.0*u - 320.0)*u + 160.0)*u*u - 5.0
+    # alternatively: return 160.0*u*u*(u-1.0)*(u-1.0) - 5.0
+
+def z(u,v):
+    return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * sin(pi * v)
+
+# u = i/(N-1) ; v = j/(N-1)
+#tab = [[x(i/(N-1),j/(N-1)),y(i/(N-1),j/(N-1)),z(i/(N-1),j/(N-1))] for i in range(N) for j in range(N)]
+tab = [[[x(u,v),y(u,v),z(u,v)] for i in range(N) for u in [i/(N-1)] ] for j in range(N) for v in [j/(N-1)]]
+
 
 def startup():
     update_viewport(None, 400, 400)
@@ -34,12 +52,34 @@ def axes():
 
     glEnd()
 
+def spin(angle):
+    glRotatef(angle, 1.0, 0.0, 0.0)
+    glRotatef(angle, 0.0, 1.0, 0.0)
+    glRotatef(angle, 0.0, 0.0, 1.0)
+
+
+def draw_egg_dots():
+    glBegin(GL_POINTS)
+
+    glColor3f(1.0, 1.0, 0.0) #yellow
+    
+    for i in range(N):
+        for j in range(N):
+            glVertex3fv(tab[i][j])
+
+    glEnd()
+
 
 def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
     axes()
+    spin(time * 180.0/pi)
+    #rysowanie obiektu
+
+    draw_egg_dots()
+    
 
     glFlush()
 
@@ -89,3 +129,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    #debug
+    #print(tab)
