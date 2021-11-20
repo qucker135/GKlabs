@@ -7,6 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 from random import *
+import math
 
 def startup():
     update_viewport(None, 400, 400)
@@ -35,6 +36,22 @@ def draw_rectangle(x,y,a,b,d=0.0):
     glVertex2f(x-a/2.0+d*dx, y+b/2.0+d*dy)
     glEnd()
 
+def draw_equilateral_triangle(x,y,a): #współrzędne dolnego wierzchołka oraz bok
+    glColor(1.0,1.0,0.0)
+
+    glBegin(GL_TRIANGLES)
+    glVertex2f(x,y)
+    glVertex2f(x+a,y)
+    glVertex2f(x+a/2.0, y+a*math.sqrt(0.75))
+    glEnd()
+   
+def draw_sierpinski_triangle(x,y,n,a): #współrzędne dolnego wierzchołka oraz bok
+    if n==0:
+        draw_equilateral_triangle(x,y,a)
+    else:
+        draw_sierpinski_triangle(x      ,y                     ,n-1,a/2.0)
+        draw_sierpinski_triangle(x+a/2.0,y                     ,n-1,a/2.0)
+        draw_sierpinski_triangle(x+a/4.0,y+a*math.sqrt(3.0)/4.0,n-1,a/2.0)
 
 def draw_sierpinski_carpet(x,y,a,b,n,d=0.0):
     if n==0:
@@ -44,7 +61,7 @@ def draw_sierpinski_carpet(x,y,a,b,n,d=0.0):
         draw_sierpinski_carpet(x-a/3.0,y,      a/3.0,b/3.0,n-1,d)
         draw_sierpinski_carpet(x-a/3.0,y+b/3.0,a/3.0,b/3.0,n-1,d)
         draw_sierpinski_carpet(x      ,y-b/3.0,a/3.0,b/3.0,n-1,d)
-        #raw_sierpinski_carpet(x      ,y,      a/3.0,b/3.0,n-1,d)
+        #draw_sierpinski_carpet(x      ,y,      a/3.0,b/3.0,n-1,d)
         draw_sierpinski_carpet(x      ,y+b/3.0,a/3.0,b/3.0,n-1,d)
         draw_sierpinski_carpet(x+a/3.0,y-b/3.0,a/3.0,b/3.0,n-1,d)
         draw_sierpinski_carpet(x+a/3.0,y,      a/3.0,b/3.0,n-1,d)
@@ -74,10 +91,16 @@ def draw_fractal_amogus(x,y,a,b,n,d=0.0):
 
 def render(time):
     glClear(GL_COLOR_BUFFER_BIT)
-
+    ############################
+    #Prosze odkomentowac odpowiednia funkcje ponizej
+    
     #draw_rectangle(20.0, 30.0, 50.0, 10.0, 10.0)
     #draw_sierpinski_carpet(0.0,0.0,100.0,100.0,3,4.0)
-    draw_fractal_amogus(0.0,0.0,100.0,100.0,3,1.0)
+    draw_fractal_amogus(0.0,0.0,100.0,100.0,4,0.0)
+    draw_sierpinski_triangle(-10.0,-10.0,2,30.0)
+    #draw_equilateral_triangle(-10.0,-10.0,30.0)
+    ############################
+
     #glColor3f(0.0, 1.0, 0.0)
     #glBegin(GL_TRIANGLES)
     #glVertex2f(0.0, 0.0)
