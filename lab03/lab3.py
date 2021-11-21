@@ -9,7 +9,7 @@ from OpenGL.GLU import *
 from math import sin, cos, pi
 from random import random
 
-N = 11
+N = 21
 
 def x(u,v):
     return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * cos(pi * v)
@@ -142,11 +142,11 @@ def draw_egg_triangles(): #dlaczego tranpozycja wspolrzednych???
 def draw_egg_triangles_strip(): 
     for i in range(N-1):
         glBegin(GL_TRIANGLE_STRIP)
-        for j in range(N-1):
+        for j in range(N):
             glColor3fv(colors[i][j])
             glVertex3fv(vertices[i][j])
-            glColor3fv(colors[i][j+1])
-            glVertex3fv(vertices[i][j+1])
+            glColor3fv(colors[(i+1)%N][j])
+            glVertex3fv(vertices[(i+1)%N][j])
         glEnd()    
 
     #glColor3fv([1.0,1.0,0.0])
@@ -213,8 +213,8 @@ def render(time):
     #draw_egg_dots()
     #draw_egg_lines()
     #draw_egg_triangles()
-    #draw_egg_triangles_strip()
-    draw_sierpinski_pyramid(3,[0.0,4.0,0.0],8.0)
+    draw_egg_triangles_strip()
+    #draw_sierpinski_pyramid(3,[0.0,4.0,0.0],8.0)
 
     glFlush()
 
