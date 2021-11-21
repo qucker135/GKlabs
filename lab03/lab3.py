@@ -128,8 +128,6 @@ def draw_egg_triangles(): #dlaczego tranpozycja wspolrzednych???
             glColor3fv(colors[i][j+1])
             glVertex3fv(vertices[i][j+1])
             #drugi trojkat
-            #glColor3fv(colors[i+1][j+1])
-            #glVertex3fv(vertices[i+1][j+1])
             glColor3fv(colors[i+1][j])
             glVertex3fv(vertices[i+1][j])
             glColor3fv(colors[i][j+1])
@@ -149,14 +147,7 @@ def draw_egg_triangles_strip():
             glVertex3fv(vertices[(i+1)%N][j])
         glEnd()    
 
-    #glColor3fv([1.0,1.0,0.0])
-    #glVertex3fv([1.0,0.0,0.0])
-    #glVertex3fv([0.0,1.0,0.0])
-    #glVertex3fv([0.0,0.0,1.0])
-    #glColor3fv([0.0,0.0,1.0])
-    #glVertex3fv([-1.0,0.0,0.0])
-    #glEnd()
-
+    
 def vec_sum(v1,v2):
     return [v1[i]+v2[i] for i in range(len(v1))]
 
@@ -207,13 +198,13 @@ def render(time):
     glLoadIdentity()
 
     
-    spin(time * 180.0/pi * 0.1)
+    spin(time * 180.0/pi * 1.0)
     axes()
     #rysowanie obiektu
-    #draw_egg_dots()
+    draw_egg_dots()
     #draw_egg_lines()
     #draw_egg_triangles()
-    draw_egg_triangles_strip()
+    #draw_egg_triangles_strip()
     #draw_sierpinski_pyramid(3,[0.0,4.0,0.0],8.0)
 
     glFlush()
@@ -264,5 +255,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    #debug
-    #print(vertices)
