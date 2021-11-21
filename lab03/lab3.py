@@ -9,7 +9,7 @@ from OpenGL.GLU import *
 from math import sin, cos, pi
 from random import random
 
-N = 31
+N = 11
 
 def x(u,v):
     return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * cos(pi * v)
@@ -27,6 +27,7 @@ vertices = [[[x(u,v),y(u,v),z(u,v)] for i in range(N) for u in [i/(N-1)] ] for j
 colors = [[[random(),random(),random()] for i in range(N)] for j in range(N)]
 
 #pozbycie się ''paskow'':
+#PYTANIE - dlaczego konieczne transponowanie?
 '''
 colors[N-1][0] = colors[0][0]
 for j in range(1,N):
@@ -39,7 +40,9 @@ if N%2==1:
 
 for i in range(N):
     colors[N-1-i][N-1] = colors[i][0]
+
 '''
+
 colors[0][N-1] = colors[0][0]
 for j in range(1,N):
     colors[j][0] = colors[0][0]
@@ -51,6 +54,7 @@ if N%2==1:
 
 for i in range(N):
     colors[N-1][N-1-i] = colors[0][i]
+
 
 def startup():
     update_viewport(None, 400, 400)
@@ -124,12 +128,14 @@ def draw_egg_triangles():
             glColor3fv(colors[i][j+1])
             glVertex3fv(vertices[i][j+1])
             #drugi trojkat
-            glColor3fv(colors[i+1][j+1])
-            glVertex3fv(vertices[i+1][j+1])
+            #glColor3fv(colors[i+1][j+1])
+            #glVertex3fv(vertices[i+1][j+1])
             glColor3fv(colors[i+1][j])
             glVertex3fv(vertices[i+1][j])
             glColor3fv(colors[i][j+1])
             glVertex3fv(vertices[i][j+1])
+            glColor3fv(colors[i+1][j+1])
+            glVertex3fv(vertices[i+1][j+1])
             
     glEnd()
 
@@ -138,7 +144,7 @@ def render(time):
     glLoadIdentity()
 
     
-    spin(time * 180.0/pi * 0.1)
+    spin(time * 180.0/pi * 5.0)
     axes()
     #rysowanie obiektu
     #draw_egg_dots()
