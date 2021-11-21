@@ -116,7 +116,7 @@ def draw_egg_lines():
 
     glEnd()
 
-def draw_egg_triangles():
+def draw_egg_triangles(): #dlaczego tranpozycja wspolrzednych???
     glBegin(GL_TRIANGLES)
     for i in range(N-1):
         for j in range(N-1):
@@ -139,17 +139,82 @@ def draw_egg_triangles():
             
     glEnd()
 
+def draw_egg_triangles_strip(): 
+    for i in range(N-1):
+        glBegin(GL_TRIANGLE_STRIP)
+        for j in range(N-1):
+            glColor3fv(colors[i][j])
+            glVertex3fv(vertices[i][j])
+            glColor3fv(colors[i][j+1])
+            glVertex3fv(vertices[i][j+1])
+        glEnd()    
+
+    #glColor3fv([1.0,1.0,0.0])
+    #glVertex3fv([1.0,0.0,0.0])
+    #glVertex3fv([0.0,1.0,0.0])
+    #glVertex3fv([0.0,0.0,1.0])
+    #glColor3fv([0.0,0.0,1.0])
+    #glVertex3fv([-1.0,0.0,0.0])
+    #glEnd()
+
+def vec_sum(v1,v2):
+    return [v1[i]+v2[i] for i in range(len(v1))]
+
+def draw_sierpinski_pyramid(n,peak,a): #stopien rekurencji; ;krawedz-podstawy i jednoczesnie wysokosc
+    if n==0:
+        glBegin(GL_TRIANGLES)
+        glColor3f(1.0,0.0,1.0) #pink
+        #pierwszy trojkat
+        glVertex3fv(peak)
+        glVertex3fv(vec_sum(peak,[ a/2.0,-a, a/2.0]))
+        glVertex3fv(vec_sum(peak,[ a/2.0,-a,-a/2.0]))
+        glColor3f(1.0,0.0,0.0) #red
+	#drugi trojkat
+        glVertex3fv(peak)
+        glVertex3fv(vec_sum(peak,[ a/2.0,-a, a/2.0]))
+        glVertex3fv(vec_sum(peak,[-a/2.0,-a, a/2.0]))
+        glColor3f(0.0,1.0,0.0) #green
+	#trzeci trojkat
+        glVertex3fv(peak)
+        glVertex3fv(vec_sum(peak,[-a/2.0,-a,-a/2.0]))
+        glVertex3fv(vec_sum(peak,[ a/2.0,-a,-a/2.0]))
+        glColor3f(0.0,0.0,1.0) #blue
+	#czwarty trojkat
+        glVertex3fv(peak)
+        glVertex3fv(vec_sum(peak,[-a/2.0,-a,-a/2.0]))
+        glVertex3fv(vec_sum(peak,[-a/2.0,-a, a/2.0]))
+        glColor3f(1.0,1.0,0.0)
+	#piaty trojkat
+        glVertex3fv(vec_sum(peak,[ a/2.0,-a, a/2.0]))
+        glVertex3fv(vec_sum(peak,[ a/2.0,-a,-a/2.0]))
+        glVertex3fv(vec_sum(peak,[-a/2.0,-a, a/2.0]))
+        #szosty trojkat
+        glVertex3fv(vec_sum(peak,[-a/2.0,-a,-a/2.0]))
+        glVertex3fv(vec_sum(peak,[ a/2.0,-a,-a/2.0]))
+        glVertex3fv(vec_sum(peak,[-a/2.0,-a, a/2.0]))
+
+        glEnd()
+    else:
+        #narysuj 5 piramid
+        draw_sierpinski_pyramid(n-1,peak,a/2.0)
+        draw_sierpinski_pyramid(n-1,vec_sum(peak,[ a/4.0,-a/2.0, a/4.0]),a/2.0)
+        draw_sierpinski_pyramid(n-1,vec_sum(peak,[ a/4.0,-a/2.0,-a/4.0]),a/2.0)
+        draw_sierpinski_pyramid(n-1,vec_sum(peak,[-a/4.0,-a/2.0, a/4.0]),a/2.0)
+        draw_sierpinski_pyramid(n-1,vec_sum(peak,[-a/4.0,-a/2.0,-a/4.0]),a/2.0)
+
 def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
     
-    spin(time * 180.0/pi * 5.0)
+    spin(time * 180.0/pi * 0.1)
     axes()
     #rysowanie obiektu
     #draw_egg_dots()
     #draw_egg_lines()
-    draw_egg_triangles()
+    #draw_egg_triangles()
+    #draw_egg_triangles_strip()
+    draw_sierpinski_pyramid(3,[0.0,4.0,0.0],8.0)
 
     glFlush()
 
