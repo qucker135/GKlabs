@@ -11,6 +11,7 @@ from random import random
 
 N = 21
 
+
 def x(u,v):
     return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * cos(pi * v)
 
@@ -23,7 +24,7 @@ def z(u,v):
 
 # u = i/(N-1) ; v = j/(N-1)
 #vertices = [[x(i/(N-1),j/(N-1)),y(i/(N-1),j/(N-1)),z(i/(N-1),j/(N-1))] for i in range(N) for j in range(N)]
-vertices = [[[x(u,v),y(u,v),z(u,v)] for i in range(N) for u in [i/(N-1)] ] for j in range(N) for v in [j/(N-1)]]
+vertices = [[[x(u,v),y(u,v),z(u,v)] for i in range(N) for u in [i/(N-1)] ] for j in range(N) for v in [j/(N-1)]] #[TA LISTA]
 colors = [[[random(),random(),random()] for i in range(N)] for j in range(N)]
 
 #pozbycie się ''paskow'':
@@ -42,7 +43,7 @@ for i in range(N):
     colors[N-1-i][N-1] = colors[i][0]
 
 '''
-
+#transponowanie ze względu na to, jak python układa indeksy w tej liscie [TA LISTA]
 colors[0][N-1] = colors[0][0]
 for j in range(1,N):
     colors[j][0] = colors[0][0]
@@ -201,9 +202,9 @@ def render(time):
     spin(time * 180.0/pi * 1.0)
     axes()
     #rysowanie obiektu
-    draw_egg_dots()
+    #draw_egg_dots()
     #draw_egg_lines()
-    #draw_egg_triangles()
+    draw_egg_triangles()
     #draw_egg_triangles_strip()
     #draw_sierpinski_pyramid(3,[0.0,4.0,0.0],8.0)
 
