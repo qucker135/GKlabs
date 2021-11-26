@@ -11,9 +11,13 @@ viewer = [0.0, 0.0, 10.0]
 
 theta = 0.0 #ruch wokol osi y (prawo-lewo)
 phi = 0.0   #ruch wokol osi x (gora-dol)
+scale = 1.0
+scalingRatio = 1.005
 pix2angle = 1.0
 
 left_mouse_button_pressed = 0
+right_mouse_button_pressed = 0
+
 mouse_x_pos_old = 0 #ruch myszy w osi x, steruje obrotem wokol osi y
 delta_x = 0
 
@@ -86,6 +90,8 @@ def example_object():
 def render(time):
     global theta
     global phi
+    global scale
+    global scalingRatio
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -97,9 +103,14 @@ def render(time):
         theta += delta_x * pix2angle
         phi += delta_y * pix2angle
 
+    if right_mouse_button_pressed:
+        scale *= scalingRatio
+
     glRotatef(theta, 0.0, 1.0, 0.0)
     glRotatef(phi,   1.0, 0.0, 0.0)
-    
+
+    glScalef(scale,scale,scale)
+
     axes()
     example_object()
 
@@ -145,11 +156,17 @@ def mouse_motion_callback(window, x_pos, y_pos):
 
 def mouse_button_callback(window, button, action, mods):
     global left_mouse_button_pressed
+    global right_mouse_button_pressed
 
     if button == GLFW_MOUSE_BUTTON_LEFT and action == GLFW_PRESS:
         left_mouse_button_pressed = 1
     else:
         left_mouse_button_pressed = 0
+
+    if button == GLFW_MOUSE_BUTTON_RIGHT and action == GLFW_PRESS:
+        right_mouse_button_pressed = 1
+    else:
+        right_mouse_button_pressed = 0
 
 
 def main():
