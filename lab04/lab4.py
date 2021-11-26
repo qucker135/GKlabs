@@ -157,6 +157,7 @@ def mouse_motion_callback(window, x_pos, y_pos):
 def mouse_button_callback(window, button, action, mods):
     global left_mouse_button_pressed
     global right_mouse_button_pressed
+    global scalingRatio
 
     if button == GLFW_MOUSE_BUTTON_LEFT and action == GLFW_PRESS:
         left_mouse_button_pressed = 1
@@ -167,6 +168,9 @@ def mouse_button_callback(window, button, action, mods):
         right_mouse_button_pressed = 1
     else:
         right_mouse_button_pressed = 0
+
+    if button == GLFW_MOUSE_BUTTON_RIGHT and action == GLFW_RELEASE:
+        scalingRatio = 1.0/scalingRatio
 
 
 def main():
