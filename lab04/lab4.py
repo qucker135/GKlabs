@@ -8,7 +8,12 @@ from OpenGL.GLU import *
 
 from math import cos, sin, pi
 
+mode = 2 #1 - obrot obiektu, 2 - poruszanie kamera
+
+maxR = 20.0
 R = 10.0
+minR = 1.0
+up_y = 1.0 #poczatkowo zorientowana w gore
 
 viewer = [0.0, 0.0, 10.0]
 #[x_eye, y_eye, z_eye] = [0.0, 0.0, R]
@@ -96,14 +101,21 @@ def update_camera():
     global theta
     global phi
     global viewer
+    global up_y
 
-    #while(phi > pi):
-    #    phi -= 2.0*pi
+    while(phi > 180.0):
+        phi -= 360.0
 
-    #while(phi < -pi):
-    #    phi += 2.0*pi
+    while(phi < -180.0):
+        phi += 360.0
 
-    #now, phi belongs to <-pi; pi>
+    #now, phi belongs to <-180.0; 180.0>
+
+    #w zaleznosci od kata obroc kamere
+    if phi <= 90.0 and phi >= -90.0:
+        up_y = 1.0
+    else:
+        up_y = -1.0
 
     viewer = [
         R * cos(theta * pi/180.0) * cos(phi * pi/180.0),
@@ -118,27 +130,31 @@ def render(time):
     global scalingRatio
     global R
     global viewer
+    global up_y
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    update_camera()
+    if mode==2:
+        update_camera()
 
     gluLookAt(viewer[0], viewer[1], viewer[2],
-              0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+              0.0, 0.0, 0.0, 0.0, up_y, 0.0)
 
     if left_mouse_button_pressed:
-        theta += delta_x * pix2angle
+        theta += delta_x * pix2angle * up_y #naprawienie sterowania w osi y
         phi += delta_y * pix2angle
 
     if right_mouse_button_pressed:
-        #scale *= scalingRatio
+        scale *= scalingRatio
+        scale = max([minR, min([maxR,scale])]) 
         R /= scalingRatio
+        R = max([minR, min([maxR,R])])
 
-    #glRotatef(theta, 0.0, 1.0, 0.0)
-    #glRotatef(phi,   1.0, 0.0, 0.0)
-
-    #glScalef(scale,scale,scale)
+    if mode==1:
+        glRotatef(theta, 0.0, 1.0, 0.0)
+        glRotatef(phi,   1.0, 0.0, 0.0)
+        glScalef(scale,scale,scale)
 
     axes()
     example_object()
@@ -165,8 +181,24 @@ def update_viewport(window, width, height):
 
 
 def keyboard_key_callback(window, key, scancode, action, mods):
+    global mode
+    #przywracanie ust. domyslnych w tym miejscu to byl jednak zly pomysl
+    #global theta
+    #global phi
+    #global R
+
     if key == GLFW_KEY_ESCAPE and action == GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
+    if key == GLFW_KEY_1 and action == GLFW_PRESS:
+        mode = 1
+        #theta = 0.0
+        #phi = 0.0
+        #R = 10.0
+    if key == GLFW_KEY_2 and action == GLFW_PRESS:
+        mode = 2
+        #theta = 0.0
+        #phi = 0.0
+        #R = 10.0
 
 
 def mouse_motion_callback(window, x_pos, y_pos):
