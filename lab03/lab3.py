@@ -194,6 +194,16 @@ def draw_sierpinski_pyramid(n,peak,a): #stopien rekurencji; ;krawedz-podstawy i 
         draw_sierpinski_pyramid(n-1,vec_sum(peak,[-a/4.0,-a/2.0, a/4.0]),a/2.0)
         draw_sierpinski_pyramid(n-1,vec_sum(peak,[-a/4.0,-a/2.0,-a/4.0]),a/2.0)
 
+#def draw_sierpinski_tetrahedron(
+#        n,
+#        peak, #pep8-like indentation (here unnecessary, just keeping this concept in mind)
+#        a):
+#    if n==0:
+#        
+#    else:
+#        #narysuj 4 mniejsze tetraedry
+#        draw_sierpinski_tetrahedron(n-1, )
+
 def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -204,7 +214,7 @@ def render(time):
     #rysowanie obiektu
     #draw_egg_dots()
     #draw_egg_lines()
-    draw_egg_triangles()
+    #draw_egg_triangles()
     #draw_egg_triangles_strip()
     #draw_sierpinski_pyramid(3,[0.0,4.0,0.0],8.0)
 
