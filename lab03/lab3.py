@@ -215,7 +215,7 @@ def render(time):
     #draw_egg_dots()
     #draw_egg_lines()
     #draw_egg_triangles()
-    #draw_egg_triangles_strip()
+    draw_egg_triangles_strip()
     #draw_sierpinski_pyramid(3,[0.0,4.0,0.0],8.0)
 
     glFlush()
