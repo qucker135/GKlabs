@@ -6,8 +6,12 @@ from glfw.GLFW import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+from math import cos, sin, pi
+
+R = 10.0
 
 viewer = [0.0, 0.0, 10.0]
+#[x_eye, y_eye, z_eye] = [0.0, 0.0, R]
 
 theta = 0.0 #ruch wokol osi y (prawo-lewo)
 phi = 0.0   #ruch wokol osi x (gora-dol)
@@ -87,14 +91,38 @@ def example_object():
     gluDeleteQuadric(quadric)
 
 
+def update_camera():
+    global R
+    global theta
+    global phi
+    global viewer
+
+    #while(phi > pi):
+    #    phi -= 2.0*pi
+
+    #while(phi < -pi):
+    #    phi += 2.0*pi
+
+    #now, phi belongs to <-pi; pi>
+
+    viewer = [
+        R * cos(theta * pi/180.0) * cos(phi * pi/180.0),
+	R * sin(phi * pi/180.0),
+	R * sin(theta * pi/180.0) * cos(phi * pi/180.0),
+    ]
+
 def render(time):
     global theta
     global phi
     global scale
     global scalingRatio
+    global R
+    global viewer
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
+
+    update_camera()
 
     gluLookAt(viewer[0], viewer[1], viewer[2],
               0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
@@ -104,12 +132,13 @@ def render(time):
         phi += delta_y * pix2angle
 
     if right_mouse_button_pressed:
-        scale *= scalingRatio
+        #scale *= scalingRatio
+        R /= scalingRatio
 
-    glRotatef(theta, 0.0, 1.0, 0.0)
-    glRotatef(phi,   1.0, 0.0, 0.0)
+    #glRotatef(theta, 0.0, 1.0, 0.0)
+    #glRotatef(phi,   1.0, 0.0, 0.0)
 
-    glScalef(scale,scale,scale)
+    #glScalef(scale,scale,scale)
 
     axes()
     example_object()
