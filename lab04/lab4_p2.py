@@ -13,6 +13,8 @@ position = [5.0, -0.7, 7.0]
 
 step = 0.2
 
+[step0, step2] = [0.0, 0.0]
+
 theta = 0.0
 phi = 0.0
 pix2angle = 1.0
@@ -167,6 +169,9 @@ def update_camera():
 	R * sin(theta * pi/180.0) * cos(phi * pi/180.0),
     ]
 
+    position[0] += step0
+    position[2] += step2
+
 
 
 
@@ -182,7 +187,7 @@ def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    
+    update_camera()
 
     #gluLookAt(viewer[0], viewer[1], viewer[2],
     #          0.0, 0.0, 0.0,
@@ -196,9 +201,10 @@ def render(time):
     theta -= delta_x * pix2angle  * up_y
     phi += delta_y * pix2angle# * up_y
 
-    update_camera()
+    
 
     [delta_x, delta_y] = [0.0, 0.0]
+    [step0, step2] = [0.0, 0.0]
 
     #glRotatef(theta, 0.0, 1.0, 0.0)
 
@@ -228,24 +234,34 @@ def update_viewport(window, width, height):
 
 
 def keyboard_key_callback(window, key, scancode, action, mods):
+    global step0
+    global step2
+
     if key == GLFW_KEY_ESCAPE and action == GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
     if key == GLFW_KEY_W and action == GLFW_PRESS:
         #position[0] += step
-        position[0] += step*viewer[0]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
-        position[2] += step*viewer[2]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+        step0 = step*viewer[0]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+        step2 += step*viewer[2]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+    if key == GLFW_KEY_W and action == GLFW_RELEASE:
+        [step0, step2] = [0.0, 0.0]
     if key == GLFW_KEY_S and action == GLFW_PRESS:
         #position[0] -= step
-        position[0] -= step*viewer[0]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
-        position[2] -= step*viewer[2]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+        step0 -= step*viewer[0]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+        step2 -= step*viewer[2]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+    if key == GLFW_KEY_S and action == GLFW_RELEASE:
+        [step0, step2] = [0.0, 0.0]
     if key == GLFW_KEY_D and action == GLFW_PRESS:
-        position[0] -= step*viewer[2]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
-        position[2] += step*viewer[0]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+        step0 -= step*viewer[2]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+        step2 += step*viewer[0]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
 	#position[2] += step
+    if key == GLFW_KEY_D and action == GLFW_RELEASE:
+        [step0, step2] = [0.0, 0.0]
     if key == GLFW_KEY_A and action == GLFW_PRESS:
-        position[0] += step*viewer[2]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
-        position[2] -= step*viewer[0]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
-
+        step0 += step*viewer[2]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+        step2 -= step*viewer[0]*cos(phi*pi/180.0)/hypot(viewer[0],viewer[2])
+    if key == GLFW_KEY_A and action == GLFW_RELEASE:
+        [step0, step2] = [0.0, 0.0]
 	#position[2] -= step
     
 def mouse_motion_callback(window, x_pos, y_pos):
