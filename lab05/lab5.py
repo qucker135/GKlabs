@@ -26,18 +26,21 @@ light_diffuse = [0.8, 0.8, 0.0, 1.0]
 light_specular = [1.0, 1.0, 1.0, 1.0]
 light_position = [0.0, 0.0, 10.0, 1.0]
 
+light_components = [light_ambient, light_diffuse, light_specular]
+index = [0,0] #index[0] == 0 or 1 or 2; index[1] == 0 or 1 or 2 or 3
+
 att_constant = 1.0
 att_linear = 0.05
 att_quadratic = 0.001
 
-light_ambient1 = [0.1, 0.0, 0.0, 1.0]
-light_diffuse1 = [0.8, 0.0, 0.0, 1.0]
-light_specular1 = [1.0, 1.0, 1.0, 1.0]
-light_position1 = [0.1, 0.1, 15.0, 0.5]
-
-att_constant1 = 1.0
-att_linear1 = 0.05
-att_quadratic1 = 0.001
+#light_ambient1 = [0.1, 0.0, 0.0, 1.0]
+#light_diffuse1 = [0.8, 0.0, 0.0, 1.0]
+#light_specular1 = [1.0, 1.0, 1.0, 1.0]
+#light_position1 = [0.1, 0.1, 15.0, 0.5]
+#
+#att_constant1 = 1.0
+#att_linear1 = 0.05
+#att_quadratic1 = 0.001
 
 def startup():
     update_viewport(None, 400, 400)
@@ -58,19 +61,19 @@ def startup():
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, att_linear)
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, att_quadratic)
 
-    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1)
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1)
-    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1)
-    glLightfv(GL_LIGHT1, GL_POSITION, light_position1)
+    #glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1)
+    #glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1)
+    #glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1)
+    #glLightfv(GL_LIGHT1, GL_POSITION, light_position1)
 
-    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, att_constant1)
-    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, att_linear1)
-    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, att_quadratic1)
+    #glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, att_constant1)
+    #glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, att_linear1)
+    #glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, att_quadratic1)
 
     glShadeModel(GL_SMOOTH)
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
-    glEnable(GL_LIGHT1)
+    #glEnable(GL_LIGHT1)
 
 
 def shutdown():
@@ -90,6 +93,17 @@ def render(time):
         theta += delta_x * pix2angle
 
     glRotatef(theta, 0.0, 1.0, 0.0)
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient)
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse)
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular)
+    #glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, att_constant)
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, att_linear)
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, att_quadratic)
+
+    #glEnable(GL_LIGHT0)
 
     quadric = gluNewQuadric()
     gluQuadricDrawStyle(quadric, GLU_FILL)
@@ -118,8 +132,41 @@ def update_viewport(window, width, height):
 
 
 def keyboard_key_callback(window, key, scancode, action, mods):
+    global light_components
+    global index
+
     if key == GLFW_KEY_ESCAPE and action == GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
+    if key == GLFW_KEY_A and action == GLFW_PRESS:
+        index[0] = 0
+    if key == GLFW_KEY_D and action == GLFW_PRESS:
+        index[0] = 1
+    if key == GLFW_KEY_S and action == GLFW_PRESS:
+        index[0] = 2
+    if key == GLFW_KEY_0 and action == GLFW_PRESS:
+        index[1] = 0
+    if key == GLFW_KEY_1 and action == GLFW_PRESS:
+        index[1] = 1
+    if key == GLFW_KEY_2 and action == GLFW_PRESS:
+        index[1] = 2
+    if key == GLFW_KEY_3 and action == GLFW_PRESS:
+        index[1] = 3
+    if key == GLFW_KEY_UP and action == GLFW_PRESS:
+        light_components[index[0]][index[1]] += 0.1
+        if light_components[index[0]][index[1]] > 1.0:
+            light_components[index[0]][index[1]] = 1.0
+        print("component[{}][{}]=={}".format(index[0],index[1],light_components[index[0]][index[1]]))
+        print("Ambient: {}".format(light_components[0]))
+        print("Diffuse: {}".format(light_components[1]))
+        print("Specular: {}".format(light_components[2]))
+    if key == GLFW_KEY_DOWN and action == GLFW_PRESS:
+        light_components[index[0]][index[1]] -= 0.1
+        if light_components[index[0]][index[1]] < 0.0:
+            light_components[index[0]][index[1]] = 0.0
+        print("component[{}][{}]=={}".format(index[0],index[1],light_components[index[0]][index[1]]))
+        print("Ambient: {}".format(light_components[0]))
+        print("Diffuse: {}".format(light_components[1]))
+        print("Specular: {}".format(light_components[2]))
 
 
 def mouse_motion_callback(window, x_pos, y_pos):
