@@ -30,6 +30,14 @@ att_constant = 1.0
 att_linear = 0.05
 att_quadratic = 0.001
 
+light_ambient1 = [0.1, 0.0, 0.0, 1.0]
+light_diffuse1 = [0.8, 0.0, 0.0, 1.0]
+light_specular1 = [1.0, 1.0, 1.0, 1.0]
+light_position1 = [0.1, 0.1, 15.0, 0.5]
+
+att_constant1 = 1.0
+att_linear1 = 0.05
+att_quadratic1 = 0.001
 
 def startup():
     update_viewport(None, 400, 400)
@@ -50,9 +58,19 @@ def startup():
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, att_linear)
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, att_quadratic)
 
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1)
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1)
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1)
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position1)
+
+    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, att_constant1)
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, att_linear1)
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, att_quadratic1)
+
     glShadeModel(GL_SMOOTH)
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
+    glEnable(GL_LIGHT1)
 
 
 def shutdown():
