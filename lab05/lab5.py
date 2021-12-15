@@ -6,7 +6,7 @@ from glfw.GLFW import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from math import sin, cos, pi
+from math import sin, cos, pi, sqrt
 
 viewer = [0.0, 0.0, 10.0]
 
@@ -49,6 +49,68 @@ light_position1 = [0.0, 10.0, 0.0, 1.0]
 att_constant1 = 1.0
 att_linear1 = 0.05
 att_quadratic1 = 0.001
+
+
+def x(u,v):
+    return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * cos(pi * v)
+
+def y(u,v):
+    return ((160.0*u - 320.0)*u + 160.0)*u*u - 5.0
+    # alternatively: return 160.0*u*u*(u-1.0)*(u-1.0) - 5.0
+
+def z(u,v):
+    return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * sin(pi * v)
+
+def x_u(u,v):
+    return (-450.0 * u*u*u*u + 900.0*u*u*u - 810.0*u*u + 360.0 * u -45.0) * cos(pi*v)
+
+def x_v(u,v):
+    return pi * (90.0*u*u*u*u*u - 225.0*u*u*u*u + 270.0*u*u*u - 180.0*u*u + 45.0*u) * sin(pi * v)
+
+def y_u(u,v):
+    return 640.0*u*u*u - 960.0*u*u + 320.0*u
+
+def y_v(u,v):
+    return 0.0
+
+def z_u(u,v):
+    return (-450.0 * u*u*u*u + 900.0*u*u*u - 810.0*u*u + 360.0 * u -45.0) * sin(pi*v)
+
+def z_v(u,v):
+    return -pi * (90.0*u*u*u*u*u - 225.0*u*u*u*u + 270.0*u*u*u - 180.0*u*u + 45.0*u) * cos(pi * v)
+
+def Normal(u,v):
+    vec = [y_u(u,v) * z_v(u,v) - y_v(u,v) * z_u(u,v),
+        z_u(u,v) * x_v(u,v) - x_u(u,v) * z_v(u,v),
+	x_u(u,v) * y_v(u,v) - y_u(u,v) * x_v(u,v)
+        ]
+    vecLen = sqrt(vec[0]**2.0+vec[1]**2.0+vec[2]**2.0)
+    vec = [vec[0]/vecLen, vec[1]/vecLen, vec[2]/vecLen]
+    return vec
+
+def draw_egg_triangles_strip(N):
+    vertices = [[[x(u,v),y(u,v),z(u,v)] for j in range(N) for v in [j/(N-1)] ] for i in range(N) for u in [i/(N-1)]] 
+
+    for i in range(N-1):
+        glBegin(GL_TRIANGLE_STRIP)
+        for j in range(N):
+            try:
+                n = Normal(i/(N-1),j/(N-1))
+                glNormal(n[0],n[1],n[2])
+            except:
+                pass
+            glColor3fv([0.0, 0.0, 1.0]) #colors[i][j])
+            glVertex3fv(vertices[i][j]) 
+            try:
+                n = Normal((i+1)/(N-1),j/(N-1))
+                glNormal(n[0],n[1],n[2])
+            except:
+                pass
+            glColor3fv([0.0, 0.0, 1.0]) #colors[(i+1)%N][j])
+            glVertex3fv(vertices[(i+1)%N][j])
+        glEnd()    
+
+
 
 def startup():
     update_viewport(None, 400, 400)
@@ -137,13 +199,14 @@ def render(time):
 
 
     #centralna pilka
-
+    
     glRotatef(zeta, 0.0, 1.0, 0.0)
 
-    quadric = gluNewQuadric()
-    gluQuadricDrawStyle(quadric, GLU_FILL)
-    gluSphere(quadric, 3.0, 10, 10)
-    gluDeleteQuadric(quadric)
+    draw_egg_triangles_strip(21)
+    #quadric = gluNewQuadric()
+    #gluQuadricDrawStyle(quadric, GLU_FILL)
+    #gluSphere(quadric, 3.0, 10, 10)
+    #gluDeleteQuadric(quadric)
 
     glRotatef(-zeta, 0.0, 1.0, 0.0)
 
@@ -178,7 +241,7 @@ def render(time):
 
     glTranslate(-light_position[0], -light_position[1], -light_position[2]) 
 
-    #zrodlo swiatla0 
+    #zrodlo swiatla1 
     glTranslate(light_position1[0], light_position1[1], light_position1[2]) 
     
     quadric = gluNewQuadric()
