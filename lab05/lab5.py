@@ -6,15 +6,23 @@ from glfw.GLFW import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+from math import sin, cos, pi
 
 viewer = [0.0, 0.0, 10.0]
 
+zeta = 0.0
+
 theta = 0.0
+phi = 0.0
+radius = 10.0
 pix2angle = 1.0
 
 left_mouse_button_pressed = 0
+right_mouse_button_pressed = 0
 mouse_x_pos_old = 0
 delta_x = 0
+mouse_y_pos_old = 0
+delta_y = 0
 
 mat_ambient = [1.0, 1.0, 1.0, 1.0]
 mat_diffuse = [1.0, 1.0, 1.0, 1.0]
@@ -82,6 +90,9 @@ def shutdown():
 
 def render(time):
     global theta
+    global phi
+    global zeta
+    #global 
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -90,9 +101,18 @@ def render(time):
               0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 
     if left_mouse_button_pressed:
-        theta += delta_x * pix2angle
+        theta += delta_x * pix2angle #* 0.05
+        phi += delta_y * pix2angle #* 0.05
+        print("phi: {}".format(phi))
+        print("theta: {}".format(theta))
 
-    glRotatef(theta, 0.0, 1.0, 0.0)
+    if right_mouse_button_pressed:
+        zeta += delta_x * pix2angle
+        print("zeta: {}".format(zeta))
+	#pass
+
+    #if right_mouse_button_pressed:
+    
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse)
@@ -105,10 +125,37 @@ def render(time):
 
     #glEnable(GL_LIGHT0)
 
+    glRotatef(zeta, 0.0, 1.0, 0.0)
+
     quadric = gluNewQuadric()
     gluQuadricDrawStyle(quadric, GLU_FILL)
     gluSphere(quadric, 3.0, 10, 10)
     gluDeleteQuadric(quadric)
+
+    light_position = [
+        radius * cos(theta * pi/180.0) * cos(phi * pi/180.0),
+	radius * sin(phi * pi/180.0),
+	radius * sin(theta * pi/180.0) * cos(phi * pi/180.0),
+        1.0
+	]
+   
+    glRotatef(-zeta, 0.0, 1.0, 0.0)
+
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+
+    #zrodlo swiatla 
+    glTranslate(light_position[0], light_position[1], light_position[2]) #TODO
+    
+    quadric = gluNewQuadric()
+    gluQuadricDrawStyle(quadric, GLU_LINE)
+    gluSphere(quadric, 0.5, 6, 5)
+    gluDeleteQuadric(quadric)
+
+    glTranslate(-light_position[0], -light_position[1], -light_position[2]) #TODO
+
+    #glTranslate
+
+
 
     glFlush()
 
@@ -149,8 +196,9 @@ def keyboard_key_callback(window, key, scancode, action, mods):
         index[1] = 1
     if key == GLFW_KEY_2 and action == GLFW_PRESS:
         index[1] = 2
-    if key == GLFW_KEY_3 and action == GLFW_PRESS:
-        index[1] = 3
+    #nie wiem, czy to nalezy zmieniac
+    #if key == GLFW_KEY_3 and action == GLFW_PRESS:
+    #    index[1] = 3
     if key == GLFW_KEY_UP and action == GLFW_PRESS:
         light_components[index[0]][index[1]] += 0.1
         if light_components[index[0]][index[1]] > 1.0:
@@ -172,18 +220,30 @@ def keyboard_key_callback(window, key, scancode, action, mods):
 def mouse_motion_callback(window, x_pos, y_pos):
     global delta_x
     global mouse_x_pos_old
+    global delta_y
+    global mouse_y_pos_old
 
     delta_x = x_pos - mouse_x_pos_old
     mouse_x_pos_old = x_pos
+    delta_y = y_pos - mouse_y_pos_old
+    mouse_y_pos_old = y_pos
+
+
 
 
 def mouse_button_callback(window, button, action, mods):
     global left_mouse_button_pressed
+    global right_mouse_button_pressed
 
     if button == GLFW_MOUSE_BUTTON_LEFT and action == GLFW_PRESS:
         left_mouse_button_pressed = 1
     else:
         left_mouse_button_pressed = 0
+    if button == GLFW_MOUSE_BUTTON_RIGHT and action == GLFW_PRESS:
+        right_mouse_button_pressed = 1
+    else:
+        right_mouse_button_pressed = 0
+    
 
 
 def main():
