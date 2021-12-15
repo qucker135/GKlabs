@@ -41,14 +41,14 @@ att_constant = 1.0
 att_linear = 0.05
 att_quadratic = 0.001
 
-#light_ambient1 = [0.1, 0.0, 0.0, 1.0]
-#light_diffuse1 = [0.8, 0.0, 0.0, 1.0]
-#light_specular1 = [1.0, 1.0, 1.0, 1.0]
-#light_position1 = [0.1, 0.1, 15.0, 0.5]
-#
-#att_constant1 = 1.0
-#att_linear1 = 0.05
-#att_quadratic1 = 0.001
+light_ambient1 = [0.1, 0.0, 0.0, 1.0]
+light_diffuse1 = [0.8, 0.0, 0.0, 1.0]
+light_specular1 = [1.0, 1.0, 1.0, 1.0]
+light_position1 = [0.0, 10.0, 0.0, 1.0]
+
+att_constant1 = 1.0
+att_linear1 = 0.05
+att_quadratic1 = 0.001
 
 def startup():
     update_viewport(None, 400, 400)
@@ -69,19 +69,19 @@ def startup():
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, att_linear)
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, att_quadratic)
 
-    #glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1)
-    #glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1)
-    #glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1)
-    #glLightfv(GL_LIGHT1, GL_POSITION, light_position1)
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1)
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1)
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1)
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position1)
 
-    #glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, att_constant1)
-    #glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, att_linear1)
-    #glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, att_quadratic1)
+    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, att_constant1)
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, att_linear1)
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, att_quadratic1)
 
     glShadeModel(GL_SMOOTH)
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
-    #glEnable(GL_LIGHT1)
+    glEnable(GL_LIGHT1)
 
 
 def shutdown():
@@ -125,6 +125,19 @@ def render(time):
 
     #glEnable(GL_LIGHT0)
 
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1)
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1)
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1)
+    #glLightfv(GL_LIGHT1, GL_POSITION, light_position)
+
+    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, att_constant1)
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, att_linear1)
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, att_quadratic1)
+
+
+
+    #centralna pilka
+
     glRotatef(zeta, 0.0, 1.0, 0.0)
 
     quadric = gluNewQuadric()
@@ -132,26 +145,50 @@ def render(time):
     gluSphere(quadric, 3.0, 10, 10)
     gluDeleteQuadric(quadric)
 
+    glRotatef(-zeta, 0.0, 1.0, 0.0)
+
     light_position = [
         radius * cos(theta * pi/180.0) * cos(phi * pi/180.0),
 	radius * sin(phi * pi/180.0),
 	radius * sin(theta * pi/180.0) * cos(phi * pi/180.0),
         1.0
 	]
+
+    light_position1 = [
+        radius * sin(theta * pi/180.0) * cos(phi * pi/180.0),
+        radius * cos(theta * pi/180.0) * cos(phi * pi/180.0),
+        radius * sin(phi * pi/180.0),
+        1.0
+        ]
    
-    glRotatef(-zeta, 0.0, 1.0, 0.0)
+
+  
+    
 
     glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position1)
 
-    #zrodlo swiatla 
-    glTranslate(light_position[0], light_position[1], light_position[2]) #TODO
+    #zrodlo swiatla0 
+    glTranslate(light_position[0], light_position[1], light_position[2]) 
     
     quadric = gluNewQuadric()
     gluQuadricDrawStyle(quadric, GLU_LINE)
     gluSphere(quadric, 0.5, 6, 5)
     gluDeleteQuadric(quadric)
 
-    glTranslate(-light_position[0], -light_position[1], -light_position[2]) #TODO
+    glTranslate(-light_position[0], -light_position[1], -light_position[2]) 
+
+    #zrodlo swiatla0 
+    glTranslate(light_position1[0], light_position1[1], light_position1[2]) 
+    
+    quadric = gluNewQuadric()
+    gluQuadricDrawStyle(quadric, GLU_LINE)
+    gluSphere(quadric, 0.5, 6, 5)
+    gluDeleteQuadric(quadric)
+
+    glTranslate(-light_position1[0], -light_position1[1], -light_position1[2]) 
+
+
 
     #glTranslate
 
