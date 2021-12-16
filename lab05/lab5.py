@@ -114,10 +114,12 @@ def draw_egg_triangles_strip(N):
                 if i<N/2:
                     glNormal(n[0],n[1],n[2])
                 else:
-                    glNormal(-n[0],n[1],-n[2])
-            elif i==0:
-                glNormal(1.0,0.0,0.0)
-	    glColor3fv([0.0, 0.0, 1.0]) #colors[i][j])
+                    glNormal(-n[0],-n[1],-n[2])
+            elif i==0 or i == N-1:
+                glNormal(0.0,-1.0,0.0)
+            elif i == (N-1)//2:
+                glNormal(0.0,1.0,0.0)
+            glColor3fv([0.0, 0.0, 1.0]) #colors[i][j])
             glVertex3fv(vertices[i][j]) 
             
 
