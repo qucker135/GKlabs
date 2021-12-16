@@ -11,6 +11,9 @@ from math import sin, cos, pi, sqrt
 viewer = [0.0, 0.0, 10.0]
 
 zeta = 0.0
+zi = 0.0
+
+normals_mode = 0
 
 theta = 0.0
 phi = 0.0
@@ -85,30 +88,60 @@ def Normal(u,v):
 	x_u(u,v) * y_v(u,v) - y_u(u,v) * x_v(u,v)
         ]
     vecLen = sqrt(vec[0]**2.0+vec[1]**2.0+vec[2]**2.0)
-    vec = [vec[0]/vecLen, vec[1]/vecLen, vec[2]/vecLen]
-    return vec
+    if vecLen != 0.0:
+        return [vec[0]/vecLen, vec[1]/vecLen, vec[2]/vecLen]
+    else:
+        return None
+
+def vec_sum(v1,v2):
+    return [v1[i]+v2[i] for i in range(len(v1))]
+
+def vec_diff(v1,v2):
+    return [v1[i]-v2[i] for i in range(len(v1))]
 
 def draw_egg_triangles_strip(N):
+    global normals_mode
     vertices = [[[x(u,v),y(u,v),z(u,v)] for j in range(N) for v in [j/(N-1)] ] for i in range(N) for u in [i/(N-1)]] 
-
+    normals = [ [ Normal(u,v) for j in range(N) for v in [j/(N-1)] ] for i in range(N) for u in [i/(N-1)]]
     for i in range(N-1):
         glBegin(GL_TRIANGLE_STRIP)
+        glColor3fv([0.0, 0.0, 1.0]) #colors[i][j])
         for j in range(N):
-            try:
-                n = Normal(i/(N-1),j/(N-1))
-                glNormal(n[0],n[1],n[2])
-            except:
-                pass
-            glColor3fv([0.0, 0.0, 1.0]) #colors[i][j])
+            #change to defined table
+	    #n = Normal(i/(N-1),j/(N-1))
+            n = normals[i][j]
+            if n != None:
+                if i<N/2:
+                    glNormal(n[0],n[1],n[2])
+                else:
+                    glNormal(-n[0],n[1],-n[2])
+            elif i==0:
+                glNormal(1.0,0.0,0.0)
+	    glColor3fv([0.0, 0.0, 1.0]) #colors[i][j])
             glVertex3fv(vertices[i][j]) 
-            try:
-                n = Normal((i+1)/(N-1),j/(N-1))
-                glNormal(n[0],n[1],n[2])
-            except:
-                pass
+            
+
+            n = normals[i+1][j]
+            #n = Normal((i+1)/(N-1),j/(N-1))
+            if n != None:
+                if i+1<N/2:
+                    glNormal(n[0],n[1],n[2])
+                else:
+                    glNormal(-n[0],-n[1],-n[2])
             glColor3fv([0.0, 0.0, 1.0]) #colors[(i+1)%N][j])
             glVertex3fv(vertices[(i+1)%N][j])
         glEnd()    
+
+
+    if normals_mode == 1:
+        glBegin(GL_LINES)
+        glColor3f(0.0, 1.0, 0.0) #green
+        for i in range(N):
+            for j in range(N):
+                if normals[i][j] != None:
+                    glVertex3fv(vertices[i][j])
+                    glVertex3fv(vec_sum(vertices[i][j],normals[i][j]) if i<N/2 else vec_diff(vertices[i][j],normals[i][j]))
+        glEnd()
 
 
 
@@ -154,7 +187,7 @@ def render(time):
     global theta
     global phi
     global zeta
-    #global 
+    global zi
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -170,7 +203,9 @@ def render(time):
 
     if right_mouse_button_pressed:
         zeta += delta_x * pix2angle
+        zi += delta_y * pix2angle
         print("zeta: {}".format(zeta))
+        print("zi: {}".format(zeta))
 	#pass
 
     #if right_mouse_button_pressed:
@@ -201,6 +236,7 @@ def render(time):
     #centralna pilka
     
     glRotatef(zeta, 0.0, 1.0, 0.0)
+    glRotatef(zi, 0.0, 0.0, 1.0)
 
     draw_egg_triangles_strip(21)
     #quadric = gluNewQuadric()
@@ -208,6 +244,7 @@ def render(time):
     #gluSphere(quadric, 3.0, 10, 10)
     #gluDeleteQuadric(quadric)
 
+    glRotatef(-zi, 0.0, 0.0, 1.0)
     glRotatef(-zeta, 0.0, 1.0, 0.0)
 
     light_position = [
@@ -281,6 +318,7 @@ def update_viewport(window, width, height):
 def keyboard_key_callback(window, key, scancode, action, mods):
     global light_components
     global index
+    global normals_mode
 
     if key == GLFW_KEY_ESCAPE and action == GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
@@ -315,6 +353,10 @@ def keyboard_key_callback(window, key, scancode, action, mods):
         print("Ambient: {}".format(light_components[0]))
         print("Diffuse: {}".format(light_components[1]))
         print("Specular: {}".format(light_components[2]))
+    if key == GLFW_KEY_N and action == GLFW_PRESS:
+        normals_mode = 1
+    elif key == GLFW_KEY_N and action == GLFW_RELEASE:
+        normals_mode = 0
 
 
 def mouse_motion_callback(window, x_pos, y_pos):
