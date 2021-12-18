@@ -18,6 +18,11 @@ left_mouse_button_pressed = 0
 mouse_x_pos_old = 0
 delta_x = 0
 
+hide_wall_up = 0
+hide_wall_down = 0
+hide_wall_right = 0
+hide_wall_left = 0
+
 mat_ambient = [1.0, 1.0, 1.0, 1.0]
 mat_diffuse = [1.0, 1.0, 1.0, 1.0]
 mat_specular = [1.0, 1.0, 1.0, 1.0]
@@ -103,6 +108,38 @@ def render(time):
     glTexCoord2f(0.0, 0.0)
     glVertex3f(-5.0, -5.0, 0.0)
 
+    if hide_wall_up==0:
+        glTexCoord2f(0.0, 1.0)
+        glVertex3f(5.0, 5.0, 0.0)
+        glTexCoord2f(0.5, 0.5)
+        glVertex3f(0.0, 0.0, -3.0)
+        glTexCoord2f(1.0, 1.0)
+        glVertex3f(-5.0, 5.0, 0.0)
+
+    if hide_wall_right==0:
+        glTexCoord2f(1.0, 1.0)
+        glVertex3f(-5.0, 5.0, 0.0)
+        glTexCoord2f(0.5, 0.5)
+        glVertex3f(0.0, 0.0, -3.0)
+        glTexCoord2f(1.0, 0.0)
+        glVertex3f(-5.0, -5.0, 0.0)
+
+    if hide_wall_down==0:
+        glTexCoord2f(1.0, 0.0)
+        glVertex3f(-5.0, -5.0, 0.0)
+        glTexCoord2f(0.5, 0.5)
+        glVertex3f(0.0, 0.0, -3.0)
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(5.0, -5.0, 0.0)
+
+    if hide_wall_left==0:
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(5.0, -5.0, 0.0)
+        glTexCoord2f(0.5, 0.5)
+        glVertex3f(0.0, 0.0, -3.0)
+        glTexCoord2f(0.0, 1.0)
+        glVertex3f(5.0, 5.0, 0.0)
+
     glEnd()
 
     glFlush()
@@ -127,8 +164,31 @@ def update_viewport(window, width, height):
 
 
 def keyboard_key_callback(window, key, scancode, action, mods):
+    global hide_wall_up
+    global hide_wall_down
+    global hide_wall_right
+    global hide_wall_left
+
     if key == GLFW_KEY_ESCAPE and action == GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
+    if key == GLFW_KEY_H and action == GLFW_PRESS:
+        hide_wall_left = 1
+    if key == GLFW_KEY_H and action == GLFW_RELEASE:
+        hide_wall_left = 0
+    if key == GLFW_KEY_J and action == GLFW_PRESS:
+        hide_wall_down = 1
+    if key == GLFW_KEY_J and action == GLFW_RELEASE:
+        hide_wall_down = 0
+    if key == GLFW_KEY_K and action == GLFW_PRESS:
+        hide_wall_up = 1
+    if key == GLFW_KEY_K and action == GLFW_RELEASE:
+        hide_wall_up = 0
+    if key == GLFW_KEY_L and action == GLFW_PRESS:
+        hide_wall_right = 1
+    if key == GLFW_KEY_L and action == GLFW_RELEASE:
+        hide_wall_right = 0
+
+
 
 
 def mouse_motion_callback(window, x_pos, y_pos):
