@@ -8,6 +8,8 @@ from OpenGL.GLU import *
 
 from PIL import Image
 
+from math import sin, cos, pi
+
 textureNr = 1
 
 viewer = [0.0, 0.0, 10.0]
@@ -38,10 +40,22 @@ att_constant = 1.0
 att_linear = 0.05
 att_quadratic = 0.001
 
-image1 = Image.open("tekstura_tosia.tga")
-image2 = Image.open("tekstura_drugi_kot.tga")
-#image3 = Image.open("2k_mars.tga")
+N = 21
 
+def x(u,v):
+    return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * cos(pi * v)
+
+def y(u,v):
+    return ((160.0*u - 320.0)*u + 160.0)*u*u - 5.0
+    # alternatively: return 160.0*u*u*(u-1.0)*(u-1.0) - 5.0
+
+def z(u,v):
+    return ((((-90.0*u + 225.0)*u - 270.0)*u + 180.0)*u - 45.0)*u * sin(pi * v)
+
+#image1 = Image.open("tekstura_tosia.tga")
+#image2 = Image.open("tekstura_drugi_kot.tga")
+image3 = Image.open("2k_mars.tga")
+vertices = [[[x(u,v),y(u,v),z(u,v)] for i in range(N) for u in [i/(N-1)] ] for j in range(N) for v in [j/(N-1)]] #[TA LISTA]
 
 def startup():
     global image3
@@ -75,13 +89,47 @@ def startup():
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
     glTexImage2D(
-        GL_TEXTURE_2D, 0, 3, image1.size[0], image1.size[1], 0,
-        GL_RGB, GL_UNSIGNED_BYTE, image1.tobytes("raw", "RGB", 0, -1)
+        GL_TEXTURE_2D, 0, 3, image3.size[0], image3.size[1], 0,
+        GL_RGB, GL_UNSIGNED_BYTE, image3.tobytes("raw", "RGB", 0, -1)
     )
 
 
 def shutdown():
     pass
+
+def draw_egg_triangles(): #dlaczego tranpozycja wspolrzednych???
+    glBegin(GL_TRIANGLES)
+    for i in range(N-1):
+        for j in range(N-1):
+            #pierwszy trojkat
+            #glColor3fv(colors[i][j])
+            glTexCoord2f(i/(N-1), j/(N-1))
+            glVertex3fv(vertices[i][j])
+            #glColor3fv(colors[i+1][j])
+            glTexCoord2f((i+1)/(N-1), j/(N-1))
+            glVertex3fv(vertices[i+1][j])
+            #glColor3fv(colors[i][j+1])
+            glTexCoord2f(i/(N-1), (j+1)/(N-1))
+            glVertex3fv(vertices[i][j+1])
+            #drugi trojkat
+            #glColor3fv(colors[i][j+1])
+            glTexCoord2f(i/(N-1), (j+1)/(N-1))
+            glVertex3fv(vertices[i][j+1])
+
+
+	    #glColor3fv(colors[i+1][j])
+            glTexCoord2f((i+1)/(N-1), j/(N-1))
+            glVertex3fv(vertices[i+1][j])
+            
+
+	    #glColor3fv(colors[i+1][j+1])
+            glTexCoord2f((i+1)/(N-1), (j+1)/(N-1))
+            glVertex3fv(vertices[i+1][j+1])
+            
+    glEnd()
+
+
+
 
 
 def render(time):
@@ -100,33 +148,33 @@ def render(time):
 
     glRotatef(theta, 0.0, 1.0, 0.0)
 
-    if textureNr==2:
-        glTexImage2D(
-            GL_TEXTURE_2D, 0, 3, image2.size[0], image2.size[1], 0,
-            GL_RGB, GL_UNSIGNED_BYTE, image2.tobytes("raw", "RGB", 0, -1)
-        )
-    else:
-        glTexImage2D(
-            GL_TEXTURE_2D, 0, 3, image1.size[0], image1.size[1], 0,
-            GL_RGB, GL_UNSIGNED_BYTE, image1.tobytes("raw", "RGB", 0, -1)
-        )
+    #if textureNr==2:
+    #    glTexImage2D(
+    #        GL_TEXTURE_2D, 0, 3, image2.size[0], image2.size[1], 0,
+    #        GL_RGB, GL_UNSIGNED_BYTE, image2.tobytes("raw", "RGB", 0, -1)
+    #    )
+    #else:
+    #    glTexImage2D(
+    #        GL_TEXTURE_2D, 0, 3, image1.size[0], image1.size[1], 0,
+    #        GL_RGB, GL_UNSIGNED_BYTE, image1.tobytes("raw", "RGB", 0, -1)
+    #    )
 
+    draw_egg_triangles()
 
-
-    glBegin(GL_TRIANGLES)
-    glTexCoord2f(0.0, 0.0)
-    glVertex3f(-5.0, -5.0, 0.0)
-    glTexCoord2f(1.0, 0.0)
-    glVertex3f(5.0, -5.0, 0.0)
-    glTexCoord2f(1.0, 1.0)
-    glVertex3f(5.0, 5.0, 0.0)
-    
-    glTexCoord2f(1.0, 1.0)
-    glVertex3f(5.0, 5.0, 0.0)
-    glTexCoord2f(0.0, 1.0)
-    glVertex3f(-5.0, 5.0, 0.0)
-    glTexCoord2f(0.0, 0.0)
-    glVertex3f(-5.0, -5.0, 0.0)
+    #glBegin(GL_TRIANGLES)
+    #glTexCoord2f(0.0, 0.0)
+    #glVertex3f(-5.0, -5.0, 0.0)
+    #glTexCoord2f(1.0, 0.0)
+    #glVertex3f(5.0, -5.0, 0.0)
+    #glTexCoord2f(1.0, 1.0)
+    #glVertex3f(5.0, 5.0, 0.0)
+    #
+    #glTexCoord2f(1.0, 1.0)
+    #glVertex3f(5.0, 5.0, 0.0)
+    #glTexCoord2f(0.0, 1.0)
+    #glVertex3f(-5.0, 5.0, 0.0)
+    #glTexCoord2f(0.0, 0.0)
+    #glVertex3f(-5.0, -5.0, 0.0)
 
    # 
 
@@ -162,7 +210,7 @@ def render(time):
    #     glTexCoord2f(0.0, 1.0)
    #     glVertex3f(5.0, 5.0, 0.0)
 
-    glEnd()
+    #glEnd()
 
     glFlush()
 
