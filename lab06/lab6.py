@@ -101,31 +101,51 @@ def draw_egg_triangles(): #dlaczego tranpozycja wspolrzednych???
     glBegin(GL_TRIANGLES)
     for i in range(N-1):
         for j in range(N-1):
-            #pierwszy trojkat
-            #glColor3fv(colors[i][j])
-            glTexCoord2f(i/(N-1), j/(N-1))
-            glVertex3fv(vertices[i][j])
-            #glColor3fv(colors[i+1][j])
-            glTexCoord2f((i+1)/(N-1), j/(N-1))
-            glVertex3fv(vertices[i+1][j])
-            #glColor3fv(colors[i][j+1])
-            glTexCoord2f(i/(N-1), (j+1)/(N-1))
-            glVertex3fv(vertices[i][j+1])
-            #drugi trojkat
-            #glColor3fv(colors[i][j+1])
-            glTexCoord2f(i/(N-1), (j+1)/(N-1))
-            glVertex3fv(vertices[i][j+1])
+            if j >= (N-1)//2:
+                #pierwszy trojkat
+                #glColor3fv(colors[i][j])
+                glTexCoord2f(i/(N-1), j/(N-1))
+                glVertex3fv(vertices[i][j])
+                #glColor3fv(colors[i+1][j])
+                glTexCoord2f((i+1)/(N-1), j/(N-1))
+                glVertex3fv(vertices[i+1][j])
+                #glColor3fv(colors[i][j+1])
+                glTexCoord2f(i/(N-1), (j+1)/(N-1))
+                glVertex3fv(vertices[i][j+1])
+                #drugi trojkat
+                #glColor3fv(colors[i][j+1])
+                glTexCoord2f(i/(N-1), (j+1)/(N-1))
+                glVertex3fv(vertices[i][j+1])
+	        #glColor3fv(colors[i+1][j])
+                glTexCoord2f((i+1)/(N-1), j/(N-1))
+                glVertex3fv(vertices[i+1][j])
+	        #glColor3fv(colors[i+1][j+1])
+                glTexCoord2f((i+1)/(N-1), (j+1)/(N-1))
+                glVertex3fv(vertices[i+1][j+1])
+            else:
+                #pierwszy trojkat
+                #glColor3fv(colors[i][j])
+                glTexCoord2f(i/(N-1), j/(N-1))
+                glVertex3fv(vertices[i][j])
+                #glColor3fv(colors[i][j+1])
+                glTexCoord2f(i/(N-1), (j+1)/(N-1))
+                glVertex3fv(vertices[i][j+1])
+                #glColor3fv(colors[i+1][j])
+                glTexCoord2f((i+1)/(N-1), j/(N-1))
+                glVertex3fv(vertices[i+1][j])
+		#drugi trojkat
+                #glColor3fv(colors[i+1][j])
+                glTexCoord2f((i+1)/(N-1), j/(N-1))
+                glVertex3fv(vertices[i+1][j])
+	        #glColor3fv(colors[i][j+1])
+                glTexCoord2f(i/(N-1), (j+1)/(N-1))
+                glVertex3fv(vertices[i][j+1])
+		#glColor3fv(colors[i+1][j+1])
+                glTexCoord2f((i+1)/(N-1), (j+1)/(N-1))
+                glVertex3fv(vertices[i+1][j+1])
 
 
-	    #glColor3fv(colors[i+1][j])
-            glTexCoord2f((i+1)/(N-1), j/(N-1))
-            glVertex3fv(vertices[i+1][j])
-            
 
-	    #glColor3fv(colors[i+1][j+1])
-            glTexCoord2f((i+1)/(N-1), (j+1)/(N-1))
-            glVertex3fv(vertices[i+1][j+1])
-            
     glEnd()
 
 
