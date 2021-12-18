@@ -8,6 +8,7 @@ from OpenGL.GLU import *
 
 from PIL import Image
 
+textureNr = 1
 
 viewer = [0.0, 0.0, 10.0]
 
@@ -37,8 +38,14 @@ att_constant = 1.0
 att_linear = 0.05
 att_quadratic = 0.001
 
+image1 = Image.open("tekstura_tosia.tga")
+image2 = Image.open("tekstura_drugi_kot.tga")
+#image3 = Image.open("2k_mars.tga")
+
 
 def startup():
+    global image3
+
     update_viewport(None, 400, 400)
     glClearColor(0.0, 0.0, 0.0, 1.0)
     glEnable(GL_DEPTH_TEST)
@@ -67,11 +74,9 @@ def startup():
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-    image = Image.open("tekstura.tga")
-
     glTexImage2D(
-        GL_TEXTURE_2D, 0, 3, image.size[0], image.size[1], 0,
-        GL_RGB, GL_UNSIGNED_BYTE, image.tobytes("raw", "RGB", 0, -1)
+        GL_TEXTURE_2D, 0, 3, image1.size[0], image1.size[1], 0,
+        GL_RGB, GL_UNSIGNED_BYTE, image1.tobytes("raw", "RGB", 0, -1)
     )
 
 
@@ -81,6 +86,8 @@ def shutdown():
 
 def render(time):
     global theta
+    global image1
+    global image2
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -92,6 +99,19 @@ def render(time):
         theta += delta_x * pix2angle
 
     glRotatef(theta, 0.0, 1.0, 0.0)
+
+    if textureNr==2:
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, 3, image2.size[0], image2.size[1], 0,
+            GL_RGB, GL_UNSIGNED_BYTE, image2.tobytes("raw", "RGB", 0, -1)
+        )
+    else:
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, 3, image1.size[0], image1.size[1], 0,
+            GL_RGB, GL_UNSIGNED_BYTE, image1.tobytes("raw", "RGB", 0, -1)
+        )
+
+
 
     glBegin(GL_TRIANGLES)
     glTexCoord2f(0.0, 0.0)
@@ -108,37 +128,39 @@ def render(time):
     glTexCoord2f(0.0, 0.0)
     glVertex3f(-5.0, -5.0, 0.0)
 
-    if hide_wall_up==0:
-        glTexCoord2f(0.0, 1.0)
-        glVertex3f(5.0, 5.0, 0.0)
-        glTexCoord2f(0.5, 0.5)
-        glVertex3f(0.0, 0.0, -3.0)
-        glTexCoord2f(1.0, 1.0)
-        glVertex3f(-5.0, 5.0, 0.0)
+   # 
 
-    if hide_wall_right==0:
-        glTexCoord2f(1.0, 1.0)
-        glVertex3f(-5.0, 5.0, 0.0)
-        glTexCoord2f(0.5, 0.5)
-        glVertex3f(0.0, 0.0, -3.0)
-        glTexCoord2f(1.0, 0.0)
-        glVertex3f(-5.0, -5.0, 0.0)
+   # if hide_wall_up==0:
+   #     glTexCoord2f(0.0, 1.0)
+   #     glVertex3f(5.0, 5.0, 0.0)
+   #     glTexCoord2f(0.5, 0.5)
+   #     glVertex3f(0.0, 0.0, -3.0)
+   #     glTexCoord2f(1.0, 1.0)
+   #     glVertex3f(-5.0, 5.0, 0.0)
 
-    if hide_wall_down==0:
-        glTexCoord2f(1.0, 0.0)
-        glVertex3f(-5.0, -5.0, 0.0)
-        glTexCoord2f(0.5, 0.5)
-        glVertex3f(0.0, 0.0, -3.0)
-        glTexCoord2f(0.0, 0.0)
-        glVertex3f(5.0, -5.0, 0.0)
+   # if hide_wall_right==0:
+   #     glTexCoord2f(1.0, 1.0)
+   #     glVertex3f(-5.0, 5.0, 0.0)
+   #     glTexCoord2f(0.5, 0.5)
+   #     glVertex3f(0.0, 0.0, -3.0)
+   #     glTexCoord2f(1.0, 0.0)
+   #     glVertex3f(-5.0, -5.0, 0.0)
 
-    if hide_wall_left==0:
-        glTexCoord2f(0.0, 0.0)
-        glVertex3f(5.0, -5.0, 0.0)
-        glTexCoord2f(0.5, 0.5)
-        glVertex3f(0.0, 0.0, -3.0)
-        glTexCoord2f(0.0, 1.0)
-        glVertex3f(5.0, 5.0, 0.0)
+   # if hide_wall_down==0:
+   #     glTexCoord2f(1.0, 0.0)
+   #     glVertex3f(-5.0, -5.0, 0.0)
+   #     glTexCoord2f(0.5, 0.5)
+   #     glVertex3f(0.0, 0.0, -3.0)
+   #     glTexCoord2f(0.0, 0.0)
+   #     glVertex3f(5.0, -5.0, 0.0)
+
+   # if hide_wall_left==0:
+   #     glTexCoord2f(0.0, 0.0)
+   #     glVertex3f(5.0, -5.0, 0.0)
+   #     glTexCoord2f(0.5, 0.5)
+   #     glVertex3f(0.0, 0.0, -3.0)
+   #     glTexCoord2f(0.0, 1.0)
+   #     glVertex3f(5.0, 5.0, 0.0)
 
     glEnd()
 
@@ -168,6 +190,7 @@ def keyboard_key_callback(window, key, scancode, action, mods):
     global hide_wall_down
     global hide_wall_right
     global hide_wall_left
+    global textureNr
 
     if key == GLFW_KEY_ESCAPE and action == GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE)
@@ -187,6 +210,10 @@ def keyboard_key_callback(window, key, scancode, action, mods):
         hide_wall_right = 1
     if key == GLFW_KEY_L and action == GLFW_RELEASE:
         hide_wall_right = 0
+    
+    if key == GLFW_KEY_T and action == GLFW_PRESS:
+        textureNr = 3 - textureNr
+        
 
 
 
