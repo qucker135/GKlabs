@@ -15,6 +15,7 @@ from OpenGL.GLU import *
 rendering_program = None
 vertex_array_object = None
 vertex_buffer = None
+colors_buffer = None
 
 P_matrix = None
 
@@ -23,7 +24,9 @@ def compile_shaders():
     vertex_shader_source = """
         #version 330 core
 
-        in vec4 position;
+        
+	in vec4 position;
+	in vec4 faces_colors;
 	out vec4 vertex_color;
 
         uniform mat4 M_matrix;
@@ -32,15 +35,16 @@ def compile_shaders():
 
         void main(void) {
             gl_Position = P_matrix * V_matrix * M_matrix * position;
-	    vertex_color = vec4(0.2, 0.9, 0.1, 1.0);
-        }
+	    //vertex_color = vec4(0.2, 0.9, 0.1, 1.0);
+            vertex_color = faces_colors;
+	}
     """
 
     fragment_shader_source = """
         #version 330 core
 
-        out vec4 color;
-	in vec4 vertex_color;
+        in vec4 vertex_color;
+	out vec4 color;
 
         void main(void) {
             color = vertex_color;
@@ -85,6 +89,7 @@ def startup():
     global rendering_program
     global vertex_array_object
     global vertex_buffer
+    global colors_buffer
 
     print("OpenGL {}, GLSL {}\n".format(
         glGetString(GL_VERSION).decode('UTF-8').split()[0],
@@ -149,6 +154,56 @@ def startup():
         -0.25, +0.25, -0.25,
     ], dtype='float32')
 
+    faces_colors = numpy.array([
+        +1.00, +0.00, +0.00,
+        +1.00, -0.00, -0.00,
+        +1.00, -0.00, -0.00,
+
+        +1.00, -0.00, -0.00,
+        +1.00, +0.00, -0.00,
+        +1.00, +0.00, -0.00,
+
+        +0.00, +1.00, -0.00,
+        +0.00, +1.00, +0.00,
+        +0.00, +1.00, -0.00,
+
+        +0.00, +1.00, +0.00,
+        +0.00, +1.00, +0.00,
+        +0.00, +1.00, -0.00,
+
+        +0.00, -0.00, +1.00,
+        -0.00, -0.00, +1.00,
+        +0.00, +0.00, +1.00,
+
+        -0.00, -0.00, +1.00,
+        -0.00, +0.00, +1.00,
+        +0.00, +0.00, +1.00,
+
+        +1.00, +1.00, +0.00,
+        +1.00, +1.00, -0.00,
+        +1.00, +1.00, +0.00,
+
+        +1.00, +1.00, -0.00,
+        +1.00, +1.00, -0.00,
+        +1.00, +1.00, +0.00,
+
+        +1.00, -0.00, +1.00,
+        +1.00, -0.00, +1.00,
+        +1.00, -0.00, +1.00,
+
+        +1.00, -0.00, +1.00,
+        +1.00, -0.00, +1.00,
+        +1.00, -0.00, +1.00,
+
+        +0.00, +1.00, +1.00,
+        +0.00, +1.00, +1.00,
+        +0.00, +1.00, +1.00,
+
+        +0.00, +1.00, +1.00,
+        +0.00, +1.00, +1.00,
+        +0.00, +1.00, +1.00,
+    ], dtype='float32')
+
     vertex_buffer = glGenBuffers(1)
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer)
     glBufferData(GL_ARRAY_BUFFER, vertex_positions, GL_STATIC_DRAW)
@@ -156,15 +211,25 @@ def startup():
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, None)
     glEnableVertexAttribArray(0)
 
+    colors_buffer = glGenBuffers(1)
+    glBindBuffer(GL_ARRAY_BUFFER, colors_buffer)
+    glBufferData(GL_ARRAY_BUFFER, faces_colors, GL_STATIC_DRAW)
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, None)
+    glEnableVertexAttribArray(1)
+    
+
 
 def shutdown():
     global rendering_program
     global vertex_array_object
     global vertex_buffer
+    global colors_buffer
 
     glDeleteProgram(rendering_program)
     glDeleteVertexArrays(1, vertex_array_object)
     glDeleteBuffers(1, vertex_buffer)
+    glDeleteBuffers(1, colors_buffer)
 
 
 def render(time):
