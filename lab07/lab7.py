@@ -11,6 +11,8 @@ import numpy
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+from math import sin, cos
+
 
 rendering_program = None
 vertex_array_object = None
@@ -236,11 +238,11 @@ def render(time):
     glClearBufferfv(GL_COLOR, 0, [0.0, 0.0, 0.0, 1.0])
     glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0, 0)
 
-    M_matrix = glm.rotate(glm.mat4(1.0), time, glm.vec3(1.0, 1.0, 0.0))
+    M_matrix = glm.rotate(glm.mat4(1.0), 0.0*time, glm.vec3(1.0, 1.0, 1.0))
 
     V_matrix = glm.lookAt(
-        glm.vec3(0.0, 0.0, 1.0),
-        glm.vec3(0.0, 0.0, 0.0),
+        glm.vec3(15.0 + 30.0 * sin(time), 6.0 + 12.5*sin(time), 10.0 + 30.0 * cos(time)),#+ 5.0*sin(time)),
+        glm.vec3(5.0, 0.0, 5.0),
         glm.vec3(0.0, 1.0, 0.0)
     )
 
@@ -253,7 +255,12 @@ def render(time):
     glUniformMatrix4fv(V_location, 1, GL_FALSE, glm.value_ptr(V_matrix))
     glUniformMatrix4fv(P_location, 1, GL_FALSE, glm.value_ptr(P_matrix))
 
-    glDrawArrays(GL_TRIANGLES, 0, 36)
+    for i in range(10):
+        for j in range(10):
+            M_matrix2 = glm.translate(M_matrix, glm.vec3(float(i), 0.0, float(j)))
+            glUniformMatrix4fv(M_location, 1, GL_FALSE, glm.value_ptr(M_matrix2))
+
+            glDrawArrays(GL_TRIANGLES, 0, 36)
 
 
 def update_viewport(window, width, height):
