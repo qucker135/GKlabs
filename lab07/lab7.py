@@ -35,8 +35,12 @@ def compile_shaders():
         uniform mat4 V_matrix;
         uniform mat4 P_matrix;
 
+        float rand(in vec2 xz){
+            return fract(xz.x * gl_InstanceID + xz.y * gl_VertexID + 0.33); //* VertexID + xz.z * gl_InstanceID;
+	}
+
         void main(void) {
-            gl_Position = P_matrix * V_matrix * M_matrix * (position + vec4(gl_InstanceID % 10, 0.0, gl_InstanceID / 10, 0.0));
+            gl_Position = P_matrix * V_matrix * M_matrix * (position + vec4(gl_InstanceID % 10 + rand(position.xz), 0.0, gl_InstanceID / 10 + rand(position.xz), 0.0));
 	    //vertex_color = vec4(0.2, 0.9, 0.1, 1.0);
             vertex_color = faces_colors;
 	}
